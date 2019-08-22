@@ -8,12 +8,15 @@
 (defn- make-schema [m]
   (json/generate-string m))
 
+(defn- roundtrip [schema data opts]
+  (-> schema (->java data opts) (->clj opts)))
+
 (defn- test-roundtrip [schema data & [opts]]
   (let [schema (Schema/parse (make-schema schema))
-        obj (->java schema data opts)]
+        result (roundtrip schema data opts)]
     (if (#'core/bytes? data)
-      (is (= (seq data) (seq (->clj data opts))))
-      (is (= data (->clj obj opts))))))
+      (is (= (seq data) (seq result)))
+      (is (= data result)))))
 
 (deftest avro-bridge-roundtrip-test
   (test-roundtrip "null" nil)
@@ -37,6 +40,16 @@
   (test-roundtrip {:name "test" :type "enum" :symbols ["TEST" "ME"]} :ME)
   (test-roundtrip {:name "uuid" :type "fixed" :size 36}
                   (byte-array (map byte (str (java.util.UUID/randomUUID))))))
+
+(deftest test-defaults
+  (let [schema (Schema/parse (make-schema {:type "record"
+                                           :name "Test"
+                                           :fields [{:name "a" :type "string" :default "hi"}
+                                                    {:name "b" :type "int"}]}))]
+    (testing "default is used when no key is provided"
+      (is (= {:a "hi" :b 0} (roundtrip schema {:b 0} {}))))
+    (testing "defaults is not used when a valid valiue is provided"
+      (is (= {:a "value" :b 0} (roundtrip schema {:a "value" :b 0} {}))))))
 
 (deftest casing-fields
 

@@ -7,7 +7,8 @@
             GenericData$Record
             GenericData$Array
             GenericData$Fixed
-            GenericData$EnumSymbol]
+            GenericData$EnumSymbol
+            GenericRecordBuilder]
            [org.apache.avro.util Utf8]
            [org.apache.avro Schema Schema$Type]))
 
@@ -132,16 +133,17 @@
 
      Schema$Type/RECORD
      (if (map? obj)
-       (reduce-kv
+       (.build
+        (reduce-kv
          (fn [record k v]
            (let [java-k (java-field-fn k)
                  s (some-> (.getField schema java-k) .schema)]
              (if (and (not s) ignore-unknown-fields?)
                record
                (doto record
-                 (.put java-k (->java (or s java-k) v (conj path k) opts))))))
-         (GenericData$Record. schema)
-         obj)
+                 (.set java-k (->java (or s java-k) v (conj path k) opts))))))
+         (GenericRecordBuilder. schema)
+         obj))
        (throw-invalid-type schema path obj))
 
      (throw (Exception. (format "Field `%s` is not in schema %s" schema path))))))
