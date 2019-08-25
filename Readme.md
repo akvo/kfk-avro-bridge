@@ -1,5 +1,5 @@
 # Clojure Avro Brigde for using with Kafka and Schema Registry
-[![CircleCI](https://circleci.com/gh/konukhov/kfk-avro-bridge.svg?style=shield)](https://circleci.com/gh/konukhov/kfk-avro-bridge)
+[![Build Status](https://travis-ci.org/akvo/kfk-avro-bridge.svg?branch=master)](https://travis-ci.org/akvo/kfk-avro-bridge)
 
 This library is designed specifically for converting Clojure data structures to Avro-compatible Java classes (not Avro binary format!) back and forth in order to be able to use [Schema Registry's serializers](https://github.com/confluentinc/schema-registry/blob/master/avro-serializer/src/main/java/io/confluent/kafka/serializers/KafkaAvroSerializer.java) with Kafka and Clojure. 
 
@@ -9,7 +9,7 @@ Note, that this library is not an Avro-wrapper for Clojure: for this purpose you
 
 Add this to your favorite build file (`project.clj` or `build.boot`)
 
-`[io.thdr/kfk.avro-bridge "0.1.0-SNAPSHOT"]`
+[![Clojars Project](https://img.shields.io/clojars/v/org.akvo/kfk.avro-bridge.svg)](https://clojars.org/org.akvo/kfk.avro-bridge)
 
 ## Usage
 
